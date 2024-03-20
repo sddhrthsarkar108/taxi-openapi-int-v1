@@ -1,0 +1,118 @@
+openapi: 3.0.1
+info:
+  title: Agreement Service API
+  description: This APIs exposes endpoints to manage agreements.
+  contact:
+    name: xxx xxx
+    email: xxx@xxx.xxx
+  version: "1.0"
+servers:
+- url: http://localhost:8081/agreement-service
+  description: Generated server url
+paths:
+  /api/agreements:
+    get:
+      tags:
+      - agreement-controller
+      summary: Get Client Portfolio
+      description: "Returns account details with position, balance, product etc"
+      operationId: getAgreements
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Agreement'
+components:
+  schemas:
+    Agreement:
+      required:
+      - agreementKey
+      type: object
+      properties:
+        name:
+          type: string
+        planProvider:
+          type: string
+        planSponsor:
+          type: string
+        agreementKey:
+          $ref: '#/components/schemas/AgreementKey'
+        agreementType:
+          type: string
+          enum:
+          - INDIVIDUAL
+          - JOINT_TENANT
+          - COLLEGE_SAVINGS
+          - OTHER
+        positions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Position'
+        balanceSummary:
+          $ref: '#/components/schemas/BalanceSummary'
+        open:
+          type: boolean
+    AgreementKey:
+      required:
+      - agreementID
+      - agreementNumber
+      type: object
+      properties:
+        agreementID:
+          type: string
+           x-taxi-type:
+            name: account.AccountID
+            create: true
+        agreementNumber:
+          type: string
+           x-taxi-type:
+            name: org.people.AccountNumber
+            create: true
+        productType:
+          type: string
+          enum:
+          - MUTUAL_FUND
+          - MARYLAND_529
+          - ALASKA_529
+          - NATIONAL_529
+    BalanceSummary:
+      type: object
+      properties:
+        asOfDate:
+          type: string
+          format: date-time
+        investmentValue:
+          type: number
+          format: double
+        marketValue:
+          type: number
+          format: double
+    Position:
+      type: object
+      properties:
+        positionKey:
+          $ref: '#/components/schemas/PositionKey'
+        positionType:
+          type: string
+          enum:
+          - MUTUAL_FUND
+          - STOCK
+          - BOND
+          - MONEY_MARKET
+          - OPTION
+          - CASH
+    PositionKey:
+      required:
+      - positionID
+      type: object
+      properties:
+        positionID:
+          type: string
+        cusip:
+          type: string
+        ticker:
+          type: string
